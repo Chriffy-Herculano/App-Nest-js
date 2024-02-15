@@ -1,15 +1,18 @@
 import { Controller, Post, Body, Get, Param, Put, Patch, Delete, ParseIntPipe } from "@nestjs/common";
-import { CreateUserDTO } from "src/dto/create-user.tdo";
-import { UpdatePatchUserDTO } from "src/dto/update-patch-user.dto";
-import { UpdatePutUserDTO } from "src/dto/update-put-user.dto";
+import { CreateUserDTO } from "src/user/dto/create-user.tdo";
+import { UpdatePatchUserDTO } from "src/user/dto/update-patch-user.dto";
+import { UpdatePutUserDTO } from "src/user/dto/update-put-user.dto";
+import { UserService } from "./user.service";
 
 @Controller('users')
 export class UserController {
 
+    constructor(private readonly userService: UserService) {}
+
     //Insert
     @Post() //name, email, password OU o body mas aqui especifico qual quero pegar
-    async create(@Body() {name, email, password}: CreateUserDTO) {
-        return {name, email, password};
+    async create(@Body() data: CreateUserDTO) {
+        return this.userService.create(data);
     }
 
     //Retorna todos

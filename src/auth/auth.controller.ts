@@ -20,10 +20,10 @@ export class AuthController {
         return this.authService.login(email, password);
     }
 
-    @Post('register')
-    async register(@Body() body: AuthRegisterDTO) {
-        return this.authService.register(body);
-    }
+    // @Post('register')
+    // async register(@Body() body: AuthRegisterDTO) {
+    //     return this.authService.register(body);
+    // }
 
     @Post('forget')
     async forget(@Body() {email}: AuthForgetDTO) {

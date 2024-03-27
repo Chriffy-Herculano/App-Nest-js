@@ -15,16 +15,18 @@ export class AuthService {
     ) {}
 
     async createToken(user: User) {
-        return this.jwtService.sign({
-            id: user.id,
-            name: user.name,
-            email: user.email
-        }, {
-            expiresIn: "7 days",
-            subject: String(user.id),
-            issuer: 'login',
-            audience: 'users'
-        });
+        return {
+            accessToken: this.jwtService.sign({
+                id: user.id,
+                name: user.name,
+                email: user.email
+            }, {
+                expiresIn: "7 days",
+                subject: String(user.id),
+                issuer: 'login',
+                audience: 'users'
+            })
+        }
     }
 
     // async checkToken(token: string) {
@@ -81,10 +83,10 @@ export class AuthService {
         return this.createToken(user);
     }
 
-    async register(data: AuthRegisterDTO) {
+    //async register(data: AuthRegisterDTO) {
         
-        const user = await this.userService.create(data);
+        //const user = await this.userService.create(data);
 
-        return this.createToken(user);
-    }
+        //return this.createToken(user);
+    //}
 }

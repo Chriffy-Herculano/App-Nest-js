@@ -1,11 +1,11 @@
-import { Controller, Post } from "@nestjs/common";
-import { Body } from "@nestjs/common/decorators/http/route-params.decorator";
+import { Controller, Post, Body, UseGuards, Req} from "@nestjs/common";
 import { AuthLoginDTO } from "./dto/auth-login.dto";
 //import { AuthRegisterDTO } from "./dto/auth-register.dto";
 import { AuthResetDTO } from "./dto/auth-reset.dto";
 import { AuthForgetDTO } from "./dto/auth-forget.dto";
 import { UserService } from "src/user/user.service";
 import { AuthService } from "./auth.service";
+import { AuthGuard } from "src/guards/auth.guard";
 
 @Controller('auth')
 export class AuthController {
@@ -35,9 +35,11 @@ export class AuthController {
         return this.authService.reset(password);
     }
 
+    // quando o request chegar eu tenho os dados do usuario
+    @UseGuards(AuthGuard)
     @Post('me')
-    async me(@Body() body) {
-        return this.authService.checkToken(body.token);
+    async me(@Req() req) {
+        return {me: 'ok', data: req.tokenPayload};
     }
 
 

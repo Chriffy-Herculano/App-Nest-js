@@ -3,7 +3,7 @@ import { JwtService } from "@nestjs/jwt";
 import { User } from "@prisma/client";
 import { PrimaService } from "src/prisma/prisma.service";
 import { UserService } from "src/user/user.service";
-//import { AuthRegisterDTO } from "./dto/auth-register.dto";
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -56,14 +56,20 @@ export class AuthService {
 
     async login(email: string, password: string) {
 
+        // Procura o usuario pelo e-mail
         const user = await this.prisma.user.findFirst({
             where: {
-                email,
-                password
+                email
             }
         });
 
+        // Se não achar cai na excessão
         if(!user){
+            throw new UnauthorizedException('E-mail e/ou senha incorretos.');
+        }
+
+        // Se achar o usuario e se não bater a senha hash do banco com o que está senhdo passado cai na excessão
+        if(!await bcrypt.compare(password, user.password)) {
             throw new UnauthorizedException('E-mail e/ou senha incorretos.');
         }
 

@@ -3,20 +3,19 @@ import { CreateUserDTO } from "./dto/create-user.tdo";
 import { PrimaService } from "src/prisma/prisma.service";
 import { UpdatePutUserDTO } from "./dto/update-put-user.dto";
 import { UpdatePatchUserDTO } from "./dto/update-patch-user.dto";
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
 
     constructor(private readonly prisma: PrimaService) {}
 
-    async create({name, email, password}: CreateUserDTO){
+    async create(data: CreateUserDTO){
+
+        data.password = await bcrypt.hash(data.password, await bcrypt.genSalt());
 
         return await this.prisma.user.create({
-            data: {
-                name,
-                email,
-                password
-            },
+            data,
             //Após ele inserir posso escolher qual campo eu quero que ele traz (que foi inserido) não obrigatorio
             select: {
                 id: true
@@ -46,6 +45,10 @@ export class UserService {
 
         await this.exists(id);
 
+        const salt = await bcrypt.genSalt();
+
+        password = await bcrypt.hash(password, salt);
+
         return this.prisma.user.update({
             data:{email, name, password, birthAt: birthAt ? new Date(birthAt) : null, role},
             where: {
@@ -73,7 +76,8 @@ export class UserService {
         }
 
         if(password) {
-            data.password = password;
+            const salt = await bcrypt.genSalt();
+            data.password = await bcrypt.hash(password, salt);
         }
 
         if(role) {

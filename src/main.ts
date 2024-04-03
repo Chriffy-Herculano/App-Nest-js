@@ -6,6 +6,9 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // protege que um outro dominio acesse a api / pode ser limitado apenas para um dominio expecifico se necessario.
+  app.enableCors();
+
   //Validação dos dados TDO
   app.useGlobalPipes(new ValidationPipe());
 

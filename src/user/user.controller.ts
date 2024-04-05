@@ -9,6 +9,7 @@ import { Roles } from "src/decorators/roles.decorator";
 import { Role } from "src/enums/role.enum";
 import { RoleGuard } from "src/guards/role.guard";
 import { AuthGuard } from "src/guards/auth.guard";
+import { SkipThrottle, Throttle } from "@nestjs/throttler";
 
 @Roles(Role.Admin)
 @UseGuards(AuthGuard, RoleGuard)
@@ -18,13 +19,17 @@ export class UserController {
 
     constructor(private readonly userService: UserService) {}
 
+
     //Insert
+    //@SkipThrottle() //estou ignorando a segurançao de acesso para essa rota
     @Post() //name, email, password OU o body mas aqui especifico qual quero pegar
     async create(@Body() data: CreateUserDTO) {
         return this.userService.create(data);
     }
 
+    
     //Retorna todos
+    //@Throttle({ default: { limit: 3, ttl: 60 } }) //sobreescrevendo o padrão para essa rota em especifico.
     @Get() 
     async list() {
         //return {users:[]};

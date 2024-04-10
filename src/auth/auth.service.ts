@@ -56,6 +56,8 @@ export class AuthService {
 
     async login(email: string, password: string) {
 
+        //console.log(process.env)
+
         // Procura o usuario pelo e-mail
         const user = await this.prisma.user.findFirst({
             where: {

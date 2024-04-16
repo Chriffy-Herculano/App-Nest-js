@@ -4,6 +4,7 @@ import { User } from "@prisma/client";
 import { PrimaService } from "src/prisma/prisma.service";
 import { UserService } from "src/user/user.service";
 import * as bcrypt from 'bcrypt';
+import { MailerService } from "@nestjs-modules/mailer";
 
 @Injectable()
 export class AuthService {
@@ -14,7 +15,8 @@ export class AuthService {
     constructor(
         private readonly jwtService: JwtService, 
         private readonly prisma: PrimaService,
-        private readonly userService: UserService
+        private readonly userService: UserService,
+        private readonly mailer: MailerService
     ) {}
 
     createToken(user: User) {
@@ -89,7 +91,24 @@ export class AuthService {
             throw new UnauthorizedException('E-mail está incorreto.');
         }
 
-        //TO DO: Enviar o e-mail...
+        const token = this.jwtService.sign({
+            id: user.id
+        }, {
+            expiresIn: "30 minutes",
+            subject: String(user.id),
+            issuer: 'forget',
+            audience: 'users',
+        });
+
+        await this.mailer.sendMail({
+            subject: 'Recuperação de Senha.',
+            to: 'chriffy123@gmail.com.br',
+            template: 'forget',
+            context: {
+                name: user.name,
+                token
+            }
+        });
 
         return true;
     }

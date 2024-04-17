@@ -7,6 +7,6 @@
       "include": "templates/**/*",
       "outDir": "dist"
     }],
-    "deleteOutDir": true
+    "watchAssets": true
   }
 }
